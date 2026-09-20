@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OBMEP — Painel de Estudos</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f5f7fb}
+*{box-sizing:border-box}body{margin:0;padding:28px;display:flex;justify-content:center}
+.app{width:min(760px,100%)}.hero{background:linear-gradient(135deg,#172554,#4338ca);color:#fff;border-radius:24px;padding:28px;box-shadow:0 18px 45px #11182722}
+h1{margin:0 0 8px;font-size:28px}.subtitle{opacity:.82;margin:0}.card{background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:22px;margin-top:18px;box-shadow:0 8px 25px #1118270d}
+.stats{display:flex;align-items:end;justify-content:space-between;gap:16px}.count{font-size:30px;font-weight:800}.percent{font-size:22px;font-weight:750}
+.track{height:14px;background:#e8ebf2;border-radius:999px;overflow:hidden;margin:14px 0 20px}.bar{height:100%;width:0%;background:linear-gradient(90deg,#4f46e5,#7c3aed);transition:width .22s ease}
+.task{display:flex;align-items:center;gap:14px;padding:15px 12px;border-radius:14px;cursor:pointer;transition:.18s;background:#fff}.task:hover{background:#f6f7fb}.task input{width:21px;height:21px;accent-color:#4f46e5;cursor:pointer}.task span{font-size:16px;line-height:1.35}.task.done span{text-decoration:line-through;color:#8b93a5}.task.done{background:#f7f7ff}
+.priority{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#4f46e5;margin:0 0 8px}
+h2{margin:0 0 14px;font-size:21px}.next{margin:0;padding-left:22px}.next li{padding:8px 0;color:#384152}
+button{border:0;border-radius:12px;padding:11px 15px;background:#111827;color:#fff;font-weight:750;cursor:pointer}button:hover{opacity:.9}.footer{display:flex;justify-content:flex-end;margin-top:12px}
+</style>
+</head>
+<body>
+<main class="app">
+<section class="hero"><h1>🧠 Preparação OBMEP — 2ª Fase</h1><p class="subtitle">Geometria • Módulo 20</p></section>
+<section class="card">
+<div class="stats"><div><div class="priority">🔥 Prioridade máxima</div><div class="count" id="count">0/9</div></div><div class="percent" id="percent">0%</div></div>
+<div class="track"><div class="bar" id="bar"></div></div>
+<div id="tasks"></div>
+<div class="footer"><button id="reset">🗑️ Zerar progresso</button></div>
+</section>
+<section class="card"><h2>📚 Depois da Geometria</h2><ol class="next">
+<li>Módulo 68 — Problemas Envolvendo Áreas</li>
+<li>Módulo 69 — Métodos de Contagem e Probabilidade</li>
+<li>Questões reais da 2ª fase da OBMEP — Nível 1</li>
+<li>Revisar os pontos fracos encontrados nas questões.</li>
+</ol></section>
+</main>
+<script>
+const tasks=[
+"Parte 1 — Retângulos",
+"Parte 2 — Paralelogramos e Triângulos",
+"Parte 4 — Resolução de Exercícios + Área de Setor Circular",
+"Parte 5 — Resolução de Exercícios",
+"Parte 6 — Resolução de Exercícios",
+"Exercícios de Geometria da OBMEP — Parte 1",
+"Exercícios de Geometria da OBMEP — Parte 2",
+"Exercícios de Geometria da OBMEP — Parte 3",
+"Exercícios de Geometria da OBMEP — Parte 4"
+];
+const key="obmep-geometria-mod20-v1";
+let state=JSON.parse(localStorage.getItem(key)||"[]");
+if(!Array.isArray(state)||state.length!==tasks.length) state=Array(tasks.length).fill(false);
+const root=document.getElementById("tasks");
+function render(){
+ root.innerHTML="";
+ tasks.forEach((name,i)=>{
+   const label=document.createElement("label"); label.className="task"+(state[i]?" done":"");
+   const input=document.createElement("input"); input.type="checkbox"; input.checked=!!state[i];
+   input.addEventListener("change",()=>{state[i]=input.checked;save();render();});
+   const span=document.createElement("span"); span.textContent=name;
+   label.append(input,span); root.append(label);
+ });
+ const done=state.filter(Boolean).length, pct=Math.round(done/tasks.length*100);
+ document.getElementById("count").textContent=done+"/9";
+ document.getElementById("percent").textContent=pct+"%";
+ document.getElementById("bar").style.width=pct+"%";
+}
+function save(){localStorage.setItem(key,JSON.stringify(state));}
+document.getElementById("reset").addEventListener("click",()=>{state=Array(tasks.length).fill(false);save();render();});
+render();
+</script>
+</body>
+</html>
